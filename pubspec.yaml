@@ -1,0 +1,57 @@
+name: snapmark
+description: SnapMark - Smart Attendance App
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # UI
+  google_fonts: ^6.3.0
+  glassmorphism: ^3.0.0
+  animate_do: ^4.2.0
+
+  # Camera
+  camera: ^0.11.0+2
+
+  # Campus geofence
+  geolocator: ^14.1.1
+
+  # QR Scanner
+  mobile_scanner: ^7.0.1
+
+  # Face Detection
+  google_mlkit_face_detection: ^0.13.1
+
+  # Success vibration feedback
+  vibration: ^3.2.1
+
+  # Persist light/dark theme selection
+  shared_preferences: ^2.5.5
+
+  # Student profile privacy and document upload
+  flutter_secure_storage: ^11.2.0
+  file_picker: ^13.1.0
+  path_provider: ^2.1.6
+
+  # QR Generator
+  qr_flutter: ^4.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
