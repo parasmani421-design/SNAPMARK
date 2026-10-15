@@ -1,28 +1,79 @@
-# SnapMark
+# 🚀 SnapMark
+### Smart Attendance & College Management System
 
-## Campus attendance location
+SnapMark is a Flutter-based mobile application designed to simplify college attendance and academic management through a modern, student-friendly interface.
 
-Before opening the existing QR scanner, SnapMark checks the phone's current
-location against the institution's configured campus center and radius. The
-currently selected defaults are latitude `28.464950`, longitude `77.506610`,
-and a 2 kilometer radius.
+## 🎯 Project Objective
 
-Run on Android with those defaults:
+To make college attendance more reliable and academic information easier to access through a centralized digital platform.
 
-```sh
-flutter run
-```
+## ✨ Key Features
 
-To override them with verified campus values:
+### 📱 Student Module
+- Student dashboard
+- Attendance overview and history
+- QR-based attendance interface
+- Face verification workflow
+- Timetable
+- Academic calendar
+- Examination forms
+- Admit cards
+- Seating plans
+- Results
+- Notices and requests
+- Skill assessment and career readiness
 
-```sh
-flutter run \
-  --dart-define=CAMPUS_LATITUDE=<campus-latitude> \
-  --dart-define=CAMPUS_LONGITUDE=<campus-longitude> \
-  --dart-define=CAMPUS_RADIUS_METERS=<radius-in-meters>
-```
+### 👨‍🏫 Teacher Module — Planned
+- Class attendance management
+- Student academic progress
+- Assignment creation and evaluation
+- Quiz management
+- Study material sharing
+- Student performance reports
 
-Location permission and phone Location services must be enabled. If GPS
-uncertainty overlaps the geofence boundary, SnapMark asks the student to move
-farther inside and retry. Location is only requested while checking
-attendance; no background location permission is used.
+### 🏫 College Administration — Planned
+- Student and teacher management
+- Course, semester and section management
+- Timetable management
+- Academic data import
+- Role-based access control
+
+## 🛡️ Attendance Security
+
+The planned attendance workflow includes:
+1. Campus location validation
+2. Class session validation
+3. Time-limited QR verification
+4. Live face verification
+5. Backend validation
+6. Duplicate attendance prevention
+
+**Note:** These security layers are intended to reduce proxy attendance. No single mobile-based verification method can guarantee complete prevention of fraud.
+
+## 🧰 Technology Stack
+
+- **Frontend:** Flutter
+- **Programming Language:** Dart
+- **Development Tools:** Visual Studio Code, Android Studio
+- **Version Control:** Git and GitHub
+
+Additional backend, database and AI integrations will depend on the project's implementation roadmap.
+
+## 🚧 Project Status
+
+SnapMark is under active development. Features may be implemented, partially implemented or planned for future releases.
+
+## ▶️ Run Locally
+
+### Prerequisites
+- Flutter SDK
+- Dart SDK
+- Android Studio or VS Code
+- Git
+
+### Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/parasmani421-design/SNAPMARK.git
