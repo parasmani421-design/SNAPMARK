@@ -13,26 +13,8 @@ class CampusLocationService {
     'com.snapmark/device_integrity',
   );
 
-  static const double _maxAcceptedAccuracyMeters = 100;
-  static const Duration _maxFixAge = Duration(seconds: 20);
-
   /// Returns null only when the reported position is confidently inside campus.
   Future<String?> checkCampusLocation() async {
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      try {
-        final developerOptionsEnabled = await _deviceIntegrityChannel
-            .invokeMethod<bool>('isDeveloperOptionsEnabled');
-        if (developerOptionsEnabled == null) {
-          return 'SnapMark could not verify Developer options. QR attendance is locked until the security check succeeds.';
-        }
-        if (developerOptionsEnabled) {
-          return 'Developer options are enabled on this phone. Turn them off before scanning the attendance QR.';
-        }
-      } catch (_) {
-        return 'SnapMark could not verify Developer options. QR attendance is locked until the security check succeeds.';
-      }
-    }
-
     if (!CampusConfig.isConfigured) {
       return 'Campus location is not configured. Ask your administrator to set the campus coordinates and radius.';
     }
@@ -59,16 +41,45 @@ class CampusLocationService {
           timeLimit: Duration(seconds: 30),
         ),
       );
+
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        try {
+          final result = await _deviceIntegrityChannel.invokeMapMethod<String, dynamic>(
+            'verifyAttendanceLocation',
+            <String, Object>{
+              'latitude': position.latitude,
+              'longitude': position.longitude,
+              'accuracy': position.accuracy,
+              'fixTimeMillis': position.timestamp.millisecondsSinceEpoch,
+              'isMocked': position.isMocked,
+              'campusLatitude': CampusConfig.latitude!,
+              'campusLongitude': CampusConfig.longitude!,
+              'radiusMeters': CampusConfig.radiusMeters!,
+            },
+          );
+          if (result == null) {
+            return 'SnapMark could not verify the Android attendance security checks. Please retry.';
+          }
+          return result['error'] as String?;
+        } on PlatformException {
+          return 'SnapMark could not verify the Android attendance security checks. Please retry.';
+        } on MissingPluginException {
+          return 'SnapMark could not verify the Android attendance security checks. Please retry.';
+        }
+      }
+
+      // Non-Android targets retain the Dart-side location gate.
       if (position.isMocked) {
-        return 'A mock location was detected. Turn off Developer options and mock-location apps before scanning the attendance QR.';
+        return 'A mock location was detected. Turn off mock-location apps before scanning the attendance QR.';
       }
       if (!position.accuracy.isFinite ||
           position.accuracy <= 0 ||
-          position.accuracy > _maxAcceptedAccuracyMeters) {
+          position.accuracy > 100) {
         return 'GPS signal is still weak (±${position.accuracy.round()} m). Turn on Precise Location and retry outdoors or near a window.';
       }
       final fixAge = DateTime.now().difference(position.timestamp);
-      if (fixAge > _maxFixAge || fixAge < const Duration(seconds: -5)) {
+      if (fixAge > const Duration(seconds: 20) ||
+          fixAge < const Duration(seconds: -5)) {
         return 'Location reading is stale. Refresh GPS and retry.';
       }
 
@@ -78,9 +89,6 @@ class CampusLocationService {
         CampusConfig.latitude!,
         CampusConfig.longitude!,
       );
-
-      // Include reported GPS uncertainty so an imprecise fix near the boundary
-      // cannot be treated as a confirmed inside-campus location.
       if (distanceMeters + position.accuracy > CampusConfig.radiusMeters!) {
         if (distanceMeters - position.accuracy > CampusConfig.radiusMeters!) {
           return 'Phone location is about ${distanceMeters.round()} m from the campus center; the allowed radius is ${CampusConfig.radiusMeters!.round()} m.';
